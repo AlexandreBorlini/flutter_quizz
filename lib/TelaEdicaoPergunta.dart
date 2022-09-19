@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:quiz/Utils.dart';
+import 'package:quiz/mock.dart';
 
 class TelaEdicaoPergunta extends StatefulWidget {
+
+  late Pergunta pergunta;
+
+  TelaEdicaoPergunta(this.pergunta);
+
   _TelaEdicaoPerguntaState createState()=> _TelaEdicaoPerguntaState();
 }
 
 class _TelaEdicaoPerguntaState extends State<TelaEdicaoPergunta> {
 
-  late TextEditingController _cPergunta;
-  late TextEditingController _cRespostaCerta;
-  late TextEditingController _cRespostaErrada01;
-  late TextEditingController _cRespostaErrada02;
-  late TextEditingController _cRespostaErrada03;
+  final TextEditingController _cPergunta = TextEditingController();
+  final TextEditingController _cRespostaCerta = TextEditingController();
+  final TextEditingController _cRespostaErrada01 = TextEditingController();
+  final TextEditingController _cRespostaErrada02 = TextEditingController();
+  final TextEditingController _cRespostaErrada03 = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _cPergunta = TextEditingController();
-    _cRespostaCerta = TextEditingController();
-    _cRespostaErrada01 = TextEditingController();
-    _cRespostaErrada02 = TextEditingController();
-    _cRespostaErrada03 = TextEditingController();
+    _cPergunta.text = widget.pergunta.pergunta;
+    _cRespostaCerta.text = widget.pergunta.respostaCorreta;
+    _cRespostaErrada01.text = widget.pergunta.respostasErradas[0];
+    _cRespostaErrada02.text = widget.pergunta.respostasErradas[1];
+    _cRespostaErrada03.text = widget.pergunta.respostasErradas[2];
   }
 
   @override
