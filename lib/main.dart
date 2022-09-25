@@ -4,12 +4,14 @@ import 'package:quiz/pages/home_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp( options: FirebaseOptions(
+  await Firebase.initializeApp( options:
+  const FirebaseOptions(
     apiKey: "AIzaSyArdFYTVphHlKALVs7KkvpAdVwE6yaI9WQ",
     appId: "1:416635906650:android:a941818482098ffb1c4663",
     messagingSenderId: "416635906650",
     projectId: "flutterquizz-98591",
-  ));
+  )
+  );
   runApp(const MyApp());
 }
 
