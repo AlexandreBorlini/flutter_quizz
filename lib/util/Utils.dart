@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quiz/mock.dart';
+import 'package:quiz/domain/static.dart';
 
 class botao extends StatelessWidget {
 

@@ -1,15 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:quiz/domain/pergunta.dart';
 
-import '../TelaCriacaoQuizz.dart';
-import '../TelaEdicaoQuizz.dart';
-import '../Utils.dart';
-import '../mock.dart';
+import '../domain/static.dart';
+import '../util/Utils.dart';
+import 'TelaPersistenciaQuizz.dart';
 
 class CadastroQuizPage extends StatefulWidget {
-  const CadastroQuizPage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
+  const CadastroQuizPage({Key? key}) : super(key: key);
 
   @override
   State<CadastroQuizPage> createState() => _CadastroQuizPageState();
@@ -23,7 +21,7 @@ class _CadastroQuizPageState extends State<CadastroQuizPage> {
     return Scaffold(
       backgroundColor: Colors.blueGrey[600],
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text("CadastroQuizPage"),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -39,10 +37,10 @@ class _CadastroQuizPageState extends State<CadastroQuizPage> {
         backgroundColor: Colors.blueGrey[800],
         onPressed: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => TelaCriacao()))
+              .push(MaterialPageRoute(builder: (context) => TelaPersistenciaQuizz()))
               .then((value) => setState(() {}));
         },
-        tooltip: 'Increment',
+        tooltip: 'Nova Pergunta',
         child: const Icon(Icons.add),
       ),
     );
@@ -51,28 +49,28 @@ class _CadastroQuizPageState extends State<CadastroQuizPage> {
   Widget _getListaBotoes(context) {
     List<botao> lista = [];
 
-    for (int i = 0; i < questionarios.length; i++) {
+    for (int i = 0; i < perguntas.length; i++) {
       void _abrirModalOpcoes() {
         showModalBottomSheet(
             context: context,
             builder: (context) {
               return Column(
-                children: _getOpcoesQuestionario(questionarios[i]),
+                children: _getOpcoesQuestionario(perguntas[i]),
               );
             });
       }
 
-      var novoBotao = botao(questionarios[i].nome, _abrirModalOpcoes, 80);
+      var novoBotao = botao(perguntas[i].tema, _abrirModalOpcoes, 80);
       lista.add(novoBotao);
     }
 
     return Column(children: lista);
   }
 
-  List<botaoOpcao> _getOpcoesQuestionario(Questionario q) {
+  List<botaoOpcao> _getOpcoesQuestionario(Pergunta p) {
     Function redirecionarTelaEdicao = () {
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => TelaEdicao(q)))
+          .push(MaterialPageRoute(builder: (context) => TelaPersistenciaQuizz(pergunta: p)))
           .then((value) => setState(() {}));
     };
 

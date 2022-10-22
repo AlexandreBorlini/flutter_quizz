@@ -21,17 +21,27 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         backgroundColor: Colors.blueGrey[600],
         appBar: AppBar(
-          title: const Text("Sig in Or Sign up"),
+          title: const Text("Sig In or Sign Out"),
             actions: <Widget>[
             Padding(
             padding: EdgeInsets.only(right: 20.0),
             child: GestureDetector(
                 onTap: () {
-                  _controleTelaLogin.inicializarAplicacao(context);
+                  _controleTelaLogin.irParaTelaLogin(context);
                 },
-                child: const Icon(Icons.login)
+                child: const Icon(Icons.login, color: Colors.green)
             )
-        ),]
+        ),
+              Padding(
+                  padding: EdgeInsets.only(right: 20.0),
+                  child: GestureDetector(
+                      onTap: () {
+                        _controleTelaLogin.realizarLogOut(context);
+                      },
+                      child: const Icon(Icons.logout, color: Colors.red,)
+                  )
+              ),
+            ]
         ),
         body: const SingleChildScrollView(
           padding: EdgeInsets.only(top: 100),

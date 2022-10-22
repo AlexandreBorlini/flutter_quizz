@@ -1,16 +1,14 @@
 
 import 'package:flutter/material.dart';
-import 'package:quiz/Utils.dart';
-import 'package:quiz/mock.dart';
+import 'package:quiz/util/Utils.dart';
+import 'package:quiz/domain/static.dart';
 
-class TelaCriacao extends StatefulWidget {
-  _TelaCriacaoState createState()=> _TelaCriacaoState();
+class TelaCriacaoPergunta extends StatefulWidget {
+  _TelaCriacaoPerguntaState createState()=> _TelaCriacaoPerguntaState();
 }
 
-class _TelaCriacaoState extends State<TelaCriacao> {
+class _TelaCriacaoPerguntaState extends State<TelaCriacaoPergunta> {
 
-  String opcao = "";
-  late TextEditingController cTitulo;
   late TextEditingController _cPergunta;
   late TextEditingController _cRespostaCerta;
   late TextEditingController _cRespostaErrada01;
@@ -20,7 +18,6 @@ class _TelaCriacaoState extends State<TelaCriacao> {
   @override
   void initState() {
     super.initState();
-    cTitulo = TextEditingController();
     _cPergunta = TextEditingController();
     _cRespostaCerta = TextEditingController();
     _cRespostaErrada01 = TextEditingController();
@@ -41,14 +38,13 @@ class _TelaCriacaoState extends State<TelaCriacao> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 40),
-              campoTexto('Nome Quizz', controller: cTitulo, cor: Colors.blue),
               campoTexto('Pergunta', controller: _cPergunta, cor: Colors.blue),
               SizedBox(height: 40),
               campoTexto('Certo', controller: _cRespostaCerta, cor: Colors.green),
               campoTexto('Errado', controller: _cRespostaErrada01, cor: Colors.red),
               campoTexto('Errado', controller: _cRespostaErrada02, cor: Colors.red),
               campoTexto('Errado', controller: _cRespostaErrada03, cor: Colors.red),
-              botao("Criar", _criarQuestionario, 40),
+              botao("Criar", _criarPergunta, 40),
               SizedBox(height: 200)
             ],
           ),
@@ -56,25 +52,14 @@ class _TelaCriacaoState extends State<TelaCriacao> {
     );
   }
 
-  void _criarQuestionario() {
+  void _criarPergunta(){
     if (_cPergunta.text.isEmpty)
       snackbarError(context, "A pergunta deve ser preenchida");
-    else if (cTitulo.text.isEmpty)
-      snackbarError(context, "O título deve ser preenchido");
     else if (_cRespostaCerta.text.isEmpty || _cRespostaErrada01.text.isEmpty ||
         _cRespostaErrada02.text.isEmpty || _cRespostaErrada03.text.isEmpty)
       snackbarError(context, "Todas as respostas devem ser preenchidas");
-    else {
-      Pergunta pergunta = Pergunta(_cPergunta.text, _cRespostaCerta.text,
-          [
-            _cRespostaErrada01.text,
-            _cRespostaErrada02.text,
-            _cRespostaErrada03.text
-          ]);
-      Questionario novoQuestionario = Questionario(cTitulo.text, [pergunta]);
-      questionarios.add(novoQuestionario);
-
-      setState(() {
+    else{
+      setState((){
         Navigator.pop(context);
       });
     }

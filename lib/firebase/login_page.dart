@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz/pages/cadastro_quiz_page.dart';
-import 'package:quiz/pages/home_page.dart';
 
-import '../Utils.dart';
+import '../util/Utils.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -53,13 +52,13 @@ class _LoginPageState extends State<LoginPage> {
             ),
 
           ),
-          ElevatedButton(onPressed: _login, child: const Text('Entrar'))
+          ElevatedButton(onPressed: _signIn, child: const Text('Entrar'))
         ],
       ),
     );
   }
 
-  _login() async {
+  Future<void> _signIn() async {
     try {
       UserCredential userCredential =
           await _fireBaseAuth.signInWithEmailAndPassword(
@@ -67,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
       if (userCredential != null) {
         Navigator.of(context)
             .push(MaterialPageRoute(
-                builder: (context) => const CadastroQuizPage(title: "CadastroQuizPage")))
+                builder: (context) => const CadastroQuizPage()))
             .then((value) => setState(() {}));
       }
     } on FirebaseAuthException catch (e) {
@@ -78,4 +77,9 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
+
+  Future<void> _signOut() async {
+    await _fireBaseAuth.signOut();
+  }
+
 }
