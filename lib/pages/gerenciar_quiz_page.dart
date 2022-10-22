@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz/domain/pergunta.dart';
 
+import '../controllers/controle_persistencia_perguntas.dart';
 import '../domain/static.dart';
 import '../util/Utils.dart';
 import 'TelaPersistenciaQuizz.dart';
@@ -15,6 +16,13 @@ class CadastroQuizPage extends StatefulWidget {
 
 class _CadastroQuizPageState extends State<CadastroQuizPage> {
   String opcao = "";
+  late ControlePersistenciaPerguntas _controlePersistenciaPerguntas;
+
+  @override
+  void initState() {
+    super.initState();
+    _controlePersistenciaPerguntas = ControlePersistenciaPerguntas();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,9 +82,11 @@ class _CadastroQuizPageState extends State<CadastroQuizPage> {
           .then((value) => setState(() {}));
     };
 
+    Function chamaDelecao = () => _controlePersistenciaPerguntas.delete(context, p);
+
     List<botaoOpcao> opcoes = [
       botaoOpcao("Editar", redirecionarTelaEdicao),
-      botaoOpcao("Excluir", null),
+      botaoOpcao("Excluir", chamaDelecao),
     ];
 
     return opcoes;

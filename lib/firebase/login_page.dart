@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:quiz/pages/cadastro_quiz_page.dart';
+import 'package:quiz/pages/gerenciar_quiz_page.dart';
 
 import '../util/Utils.dart';
 
