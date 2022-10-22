@@ -1,14 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:quiz/domain/pergunta.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../util/Utils.dart';
 
 class ControlePersistenciaPerguntas {
+  late User user;
+
+  ControlePersistenciaPerguntas(this.user);
+
   CollectionReference<Map<String, dynamic>> get _collection_perguntas =>
       FirebaseFirestore.instance.collection('perguntas');
 
-  // Cria caso a pergunta não exista, atualiza caso já exista
+  Stream<QuerySnapshot> get stream => _collection_perguntas.where("id_usuario", isEqualTo: user.uid).snapshots();
+
+
+  List<Pergunta>? perguntas;
+
   Future<void> save(BuildContext context, Pergunta pergunta) async {
     var pergunta_json = pergunta.toMap();
 
@@ -20,7 +28,7 @@ class ControlePersistenciaPerguntas {
 
     if (snapShot.size > 0) {
       var documentId = snapShot.docChanges.first.doc.id;
-      _collection_perguntas
+      await _collection_perguntas
           .doc(documentId)
           .update(pergunta_json)
           .then((value) =>
@@ -28,7 +36,7 @@ class ControlePersistenciaPerguntas {
           .onError((error, stackTrace) =>
               snackbarError(context, "Falha ao atualizar pergunta! \n $error"));
     } else {
-      _collection_perguntas
+      await _collection_perguntas
           .doc()
           .set(pergunta_json)
           .then(
@@ -46,7 +54,7 @@ class ControlePersistenciaPerguntas {
         .get();
     if (snapShot.size > 0) {
       var documentId = snapShot.docChanges.first.doc.id;
-      _collection_perguntas
+      await _collection_perguntas
           .doc(documentId)
           .delete()
           .then((value) =>
@@ -56,5 +64,14 @@ class ControlePersistenciaPerguntas {
     } else {
       snackbarError(context, "Pergunta inexistente!");
     }
+  }
+
+  void recuperarPerguntas(QuerySnapshot data){
+    var perguntas_docs = data.docs;
+
+    perguntas = perguntas_docs.map((DocumentSnapshot  document) {
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+        return Pergunta.fromMap(data);
+    }).toList();
   }
 }

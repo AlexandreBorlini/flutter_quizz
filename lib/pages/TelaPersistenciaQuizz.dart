@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:quiz/domain/static.dart';
 import 'package:quiz/util/Utils.dart';
 
 import '../controllers/controle_persistencia_perguntas.dart';
@@ -25,6 +24,7 @@ class _TelaPersistenciaQuizzState extends State<TelaPersistenciaQuizz> {
 
   late ControlePersistenciaPerguntas _controlePersistenciaPerguntas;
   final FirebaseAuth auth = FirebaseAuth.instance;
+  late User user;
 
   @override
   void initState() {
@@ -34,12 +34,13 @@ class _TelaPersistenciaQuizzState extends State<TelaPersistenciaQuizz> {
     _cRespostaCerta =
         TextEditingController(text: widget.pergunta?.respostaCorreta);
     _cRespostaErrada01 =
-        TextEditingController(text: widget.pergunta?.respostasErradas[0]);
+        TextEditingController(text: widget.pergunta?.respostasErradas![0]);
     _cRespostaErrada02 =
-        TextEditingController(text: widget.pergunta?.respostasErradas[1]);
+        TextEditingController(text: widget.pergunta?.respostasErradas![1]);
     _cRespostaErrada03 =
-        TextEditingController(text: widget.pergunta?.respostasErradas[2]);
-    _controlePersistenciaPerguntas = ControlePersistenciaPerguntas();
+        TextEditingController(text: widget.pergunta?.respostasErradas![2]);
+    user = auth.currentUser!;
+    _controlePersistenciaPerguntas = ControlePersistenciaPerguntas(user);
   }
 
   @override
@@ -83,21 +84,20 @@ class _TelaPersistenciaQuizzState extends State<TelaPersistenciaQuizz> {
         _cRespostaErrada03.text.isEmpty)
       snackbarError(context, "Todas as respostas devem ser preenchidas");
     else {
-      final User user = auth.currentUser!;
-      final uid = user.uid;
-
       Pergunta pergunta = Pergunta(
-          uid, cTema.text, _cPergunta.text, _cRespostaCerta.text, [
+          user.uid, cTema.text, _cPergunta.text, _cRespostaCerta.text, [
         _cRespostaErrada01.text,
         _cRespostaErrada02.text,
         _cRespostaErrada03.text
       ]);
 
       _controlePersistenciaPerguntas.save(context, pergunta);
-      perguntas.add(pergunta);
     }
 
     setState(() {
+      if (widget.pergunta != null) {
+        Navigator.pop(context);
+      }
       Navigator.pop(context);
     });
   }
