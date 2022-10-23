@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:quiz/domain/tema.dart';
 import 'package:quiz/util/Utils.dart';
 
 import '../controllers/controle_persistencia_perguntas.dart';
@@ -7,8 +8,10 @@ import '../domain/pergunta.dart';
 
 class TelaPersistenciaQuizz extends StatefulWidget {
   late Pergunta? pergunta;
+  late Tema? tema;
+  late bool edicao;
 
-  TelaPersistenciaQuizz({Key? key, this.pergunta}) : super(key: key);
+  TelaPersistenciaQuizz({Key? key, this.pergunta, this.tema, this.edicao = false}) : super(key: key);
 
   _TelaPersistenciaQuizzState createState() => _TelaPersistenciaQuizzState();
 }
@@ -29,7 +32,10 @@ class _TelaPersistenciaQuizzState extends State<TelaPersistenciaQuizz> {
   @override
   void initState() {
     super.initState();
-    cTema = TextEditingController(text: widget.pergunta?.tema);
+    if(widget.tema != null)
+      cTema = TextEditingController(text: widget.tema?.tema);
+    else
+      cTema = TextEditingController(text: widget.pergunta?.tema);
     _cPergunta = TextEditingController(text: widget.pergunta?.pergunta);
     _cRespostaCerta =
         TextEditingController(text: widget.pergunta?.respostaCorreta);
@@ -55,7 +61,7 @@ class _TelaPersistenciaQuizzState extends State<TelaPersistenciaQuizz> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 40),
-              campoTexto('Tema', controller: cTema, cor: Colors.blue),
+              campoTexto('Tema', controller: cTema, cor: Colors.blue, editavel: widget.tema == null),
               campoTexto('Pergunta', controller: _cPergunta, cor: Colors.blue),
               SizedBox(height: 40),
               campoTexto('Certo',
@@ -92,13 +98,33 @@ class _TelaPersistenciaQuizzState extends State<TelaPersistenciaQuizz> {
       ]);
 
       _controlePersistenciaPerguntas.save(context, pergunta);
-    }
 
-    setState(() {
-      if (widget.pergunta != null) {
-        Navigator.pop(context);
+      // Como o tema ja esta carregado com suas perguntas, é necessário atualizá-las
+      // manualmente para fazer a separação por temas novamente
+      var encontrou = false;
+
+      // Se for EDICAO ve se nao foi alterado titulo, se sim, é na verdade inclusao
+      // se não, atualiza aquele item dentro do tema
+      if (widget.edicao) {
+        var tamanhoTema = widget.tema?.perguntas.length ?? 0;
+        for (var i = 0; i < tamanhoTema; i++) {
+          if (widget.tema?.perguntas[i].pergunta == _cPergunta.text) {
+            widget.tema?.perguntas[i] = pergunta;
+            encontrou = true;
+          }
+        }
+
+        if (encontrou == false)
+          widget.tema!.perguntas.add(pergunta);
       }
-      Navigator.pop(context);
-    });
+
+      setState(() {
+        if (widget.pergunta != null) {
+          Navigator.pop(context);
+        }
+        Navigator.pop(context);
+      });
+    }
   }
 }
+

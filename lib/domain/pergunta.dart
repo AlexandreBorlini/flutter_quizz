@@ -24,4 +24,8 @@ class Pergunta {
     data['respostas_erradas'] = respostasErradas;
     return data;
   }
+
+  String getTema(){
+    return tema ?? '';
+  }
 }

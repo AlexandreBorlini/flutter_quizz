@@ -1,23 +1,27 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz/domain/pergunta.dart';
 import 'package:quiz/domain/tema.dart';
-import 'package:quiz/pages/gerenciar_tema.dart';
+import 'package:quiz/pages/TelaPersistenciaQuizz.dart';
+import 'package:quiz/util/Utils.dart';
 
 import '../controllers/controle_persistencia_perguntas.dart';
-import '../util/Utils.dart';
-import 'TelaPersistenciaQuizz.dart';
 
-class CadastroQuizPage extends StatefulWidget {
-  const CadastroQuizPage({Key? key}) : super(key: key);
+class TelaGerenciarTema extends StatefulWidget {
+  const TelaGerenciarTema({Key? key, required this.title, required this.tema}) : super(key: key);
+
+  final Tema tema;
+  final String title;
 
   @override
-  State<CadastroQuizPage> createState() => _CadastroQuizPageState();
+  State<TelaGerenciarTema> createState() => _TelaGerenciarTemaState();
 }
 
-class _CadastroQuizPageState extends State<CadastroQuizPage> {
-  String opcao = "";
+
+class _TelaGerenciarTemaState extends State<TelaGerenciarTema> {
+
   final FirebaseAuth auth = FirebaseAuth.instance;
   late ControlePersistenciaPerguntas _controlePersistenciaPerguntas;
 
@@ -33,7 +37,7 @@ class _CadastroQuizPageState extends State<CadastroQuizPage> {
     return Scaffold(
       backgroundColor: Colors.blueGrey[600],
       appBar: AppBar(
-        title: const Text("GERENCIAMENTO QUIZZ"),
+        title: Text(widget.title),
       ),
       body: _stream_builder_perguntas(),
       floatingActionButton: FloatingActionButton(
@@ -41,7 +45,7 @@ class _CadastroQuizPageState extends State<CadastroQuizPage> {
         onPressed: () {
           Navigator.of(context)
               .push(MaterialPageRoute(
-                  builder: (context) => TelaPersistenciaQuizz()))
+              builder: (context) => TelaPersistenciaQuizz(tema: widget.tema, edicao: false)))
               .then((value) => setState(() {}));
         },
         tooltip: 'Nova Pergunta',
@@ -82,68 +86,43 @@ class _CadastroQuizPageState extends State<CadastroQuizPage> {
   Widget _getListaBotoes(context) {
     List<botao> lista = [];
 
-    var perguntas = _controlePersistenciaPerguntas.perguntas;
+    var perguntas = widget.tema.perguntas;
 
-    List<Tema> temas = [];
-
-    for (int i = 0; i < perguntas!.length; i++) {
-      bool existeTema = false;
-      for (int j = 0; j < temas.length; j++) {
-        if(perguntas[i].getTema() == temas[j].tema){
-          temas[j].perguntas?.add(perguntas[i]);
-          existeTema = true;
-        }
-      }
-
-      if(!existeTema){
-        List<Pergunta> listaperg = [];
-        listaperg.add(perguntas[i]);
-        Tema nt = new Tema(perguntas[i].getTema(), listaperg);
-        temas.add(nt);
-      }
-    }
-
-    for (int i = 0; i < temas.length; i++) {
+    for (int i = 0; i < perguntas.length; i++) {
       void _abrirModalOpcoes() {
         showModalBottomSheet(
             context: context,
             builder: (context) {
               return Column(
-                children: _getOpcoesQuestionario(temas[i]),
+                children: _getOpcoesQuestionario(perguntas[i]),
               );
             });
       }
 
-      var novoBotao = botao(temas[i].tema, _abrirModalOpcoes, 80);
+      var novoBotao = botao(perguntas[i].pergunta, _abrirModalOpcoes, 80);
       lista.add(novoBotao);
     }
 
     return Column(children: lista);
   }
 
-  List<botaoOpcao> _getOpcoesQuestionario(Tema t) {
-
-    void redirecionarTelaEdicaoTema(){
+  List<botaoOpcao> _getOpcoesQuestionario(Pergunta p) {
+    Function redirecionarTelaEdicao = () {
       Navigator.of(context)
           .push(MaterialPageRoute(
-          builder: (context) => TelaGerenciarTema(title: t.tema ?? '', tema: t)));
-    }
+          builder: (context) => TelaPersistenciaQuizz(pergunta: p, tema: widget.tema, edicao: true)));
+    };
 
     Function chamaDelecao = () {
-      var quantidadePerguntas = t.perguntas?.length ?? 0;
-      for(var i = 0; i < quantidadePerguntas; i++){
-
-        _controlePersistenciaPerguntas.delete(context, t.perguntas[i]);
-      }
-
+        _controlePersistenciaPerguntas.delete(context, p);
+        widget.tema?.perguntas.remove(p);
       setState(() {
         Navigator.pop(context);
       });
     };
 
     List<botaoOpcao> opcoes = [
-      botaoOpcao("Praticar", redirecionarTelaEdicaoTema),
-      botaoOpcao("Editar", redirecionarTelaEdicaoTema),
+      botaoOpcao("Editar", redirecionarTelaEdicao),
       botaoOpcao("Excluir", chamaDelecao),
     ];
 

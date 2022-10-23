@@ -50,8 +50,9 @@ class campoTexto extends StatelessWidget {
   final String nome;
   TextEditingController controller;
   final Color cor;
+  bool editavel = true;
 
-  campoTexto(this.nome, {this.cor = Colors.green, required this.controller});
+  campoTexto(this.nome, {this.cor = Colors.green, required this.controller, this.editavel = true});
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +61,7 @@ class campoTexto extends StatelessWidget {
         margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
         child: TextField(
           maxLines: null,
+          enabled: editavel,
           controller: controller,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
