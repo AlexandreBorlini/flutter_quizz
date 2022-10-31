@@ -4,8 +4,10 @@ class botao extends StatelessWidget {
   final String? texto;
   final Function? acao;
   final double? altura;
+  final Color? cor;
+  final bool disabilitado;
 
-  const botao(this.texto, this.acao, this.altura, {Key? key}) : super(key: key);
+  const botao(this.texto, this.acao, this.altura, {this.cor, this.disabilitado = false});
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +15,11 @@ class botao extends StatelessWidget {
         margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
         child: ElevatedButton(
           onPressed: () {
-            acao?.call();
+            if(!disabilitado)
+              acao?.call();
           },
           style: ElevatedButton.styleFrom(
-              primary: Colors.blueGrey[300],
+              primary: cor ?? Colors.blueGrey[300],
               minimumSize: Size(3000, altura!),
               elevation: 2),
           child: Text(texto!,
@@ -92,6 +95,8 @@ void snackbarError(context, message) {
     ),
   );
 }
+
+
 
 void snackbarSuccess(context, message) {
   ScaffoldMessenger.of(context).showSnackBar(

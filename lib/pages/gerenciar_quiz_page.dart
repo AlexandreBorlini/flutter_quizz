@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:quiz/domain/pergunta.dart';
 import 'package:quiz/domain/tema.dart';
 import 'package:quiz/pages/gerenciar_tema.dart';
+import 'package:quiz/pages/praticar_tema_page.dart';
 
 import '../controllers/controle_persistencia_perguntas.dart';
 import '../util/Utils.dart';
@@ -129,6 +130,12 @@ class _CadastroQuizPageState extends State<CadastroQuizPage> {
           builder: (context) => TelaGerenciarTema(title: t.tema ?? '', tema: t)));
     }
 
+    void redirecionarTelaPratica(){
+      Navigator.of(context)
+          .push(MaterialPageRoute(
+          builder: (context) => PraticaPage(tema: t)));
+    }
+
     Function chamaDelecao = () {
       var quantidadePerguntas = t.perguntas?.length ?? 0;
       for(var i = 0; i < quantidadePerguntas; i++){
@@ -142,7 +149,7 @@ class _CadastroQuizPageState extends State<CadastroQuizPage> {
     };
 
     List<botaoOpcao> opcoes = [
-      botaoOpcao("Praticar", redirecionarTelaEdicaoTema),
+      botaoOpcao("Praticar", redirecionarTelaPratica),
       botaoOpcao("Editar", redirecionarTelaEdicaoTema),
       botaoOpcao("Excluir", chamaDelecao),
     ];
