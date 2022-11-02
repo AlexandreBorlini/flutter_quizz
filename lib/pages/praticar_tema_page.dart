@@ -36,14 +36,29 @@ class _PraticaPageState extends State<PraticaPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const SizedBox(height: 32,),
-          Text('Questão ${_questionNumber + 1}/${widget.tema.perguntas.length}'),
+          const SizedBox(height: 22,),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 18, 6),
+            child: Text('Questão ${_questionNumber + 1}/${widget.tema.perguntas.length}', style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+              ),
+            ),
+        ),
           const Divider(thickness: 1, color: Colors.white),
       Visibility(
           visible: !_terminouQuestionario,
           child: Column(
             children: [
-              Text(widget.tema.perguntas[_questionNumber].pergunta ?? ''),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 18, 0, 40),
+                child: Text(widget.tema.perguntas[_questionNumber].pergunta ?? '', style: TextStyle(
+                  fontSize: 23,
+                  color: Colors.white,
+                ),
+                ),
+              ),
+
               montarQuestao(
                   widget.tema.perguntas[_questionNumber]),
               Visibility(
@@ -57,7 +72,14 @@ class _PraticaPageState extends State<PraticaPage> {
         visible: _terminouQuestionario,
         child: Column(
             children: [
-              Text('Acertos: $_quantidadeAcertos/${widget.tema.perguntas.length}'),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 18, 0, 40),
+                child: Text('Acertos: $_quantidadeAcertos/${widget.tema.perguntas.length}', style: TextStyle(
+                  fontSize: 30,
+                  color: Colors.white,
+                  ),
+                ),
+              ),
               botao("Sair do questionário", sairQuestionario, 40)
             ]
           ),
